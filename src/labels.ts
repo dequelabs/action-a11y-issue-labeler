@@ -6,10 +6,11 @@ export interface Label {
   
   /** Labels are the VPAT related labels we'll add. */
   const labels: ReadonlyArray<Label> = [
-    { name: "critical" },
-    { name: "serious" },
-    { name: "moderate" },
-    { name: "minor" },
+    { name: "Blocker" },
+    { name: "Critical" },
+    { name: "Serious" },
+    { name: "Moderate" },
+    { name: "Minor" },
     { name: "production" },
     { name: "VPAT" },
     { name: "WCAG 1.1.1", description: "Non-text Content" },

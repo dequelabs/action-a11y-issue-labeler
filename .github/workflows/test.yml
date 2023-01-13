@@ -3,9 +3,8 @@ on:
   issues:
     types: [opened, edited]
 jobs:
-  build:
+  lint:
     runs-on: ubuntu-latest
-    environment: Dev
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
@@ -14,7 +13,7 @@ jobs:
           cache: yarn
       - run: yarn
       - run: yarn lint
-  add_a11y_labels:
+  create_labels:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3

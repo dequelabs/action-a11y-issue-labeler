@@ -1,28 +1,34 @@
 {
-  "name": "issue-labeler",
+  "name": "action-a11y-issue-labeler",
   "version": "1.0.0",
-  "description": "",
-  "main": "lib/main.js",
+  "main": "index.js",
+  "author": "Brandon Fulco <brandon.fulco@deque.com>",
+  "license": "Unlicensed",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "lint": "eslint .",
+    "fmt": "prettier --write .",
+    "prebuild": "rimraf dist",
+    "build": "ncc build --source-map src/main.ts"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/github/issue-labeler.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/github/issue-labeler/issues"
-  },
-  "homepage": "https://github.com/github/issue-labeler#readme",
   "dependencies": {
-    "@actions/core": "^1.2.1",
-    "@actions/github": "^2.0.1",
-    "@types/js-yaml": "^3.12.1",
-    "@types/minimatch": "^3.0.3",
-    "js-yaml": "^3.13.1",
-    "minimatch": "^3.0.4"
+    "@actions/core": "^1.10.0",
+    "@actions/github": "^5.1.1"
+  },
+  "devDependencies": {
+    "@types/node": "^18.11.15",
+    "@types/prettier": "^2.7.1",
+    "@typescript-eslint/eslint-plugin": "^5.46.1",
+    "@typescript-eslint/parser": "^5.46.1",
+    "@vercel/ncc": "^0.36.0",
+    "eslint": "^8.29.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-mocha": "^10.1.0",
+    "husky": "^8.0.2",
+    "lint-staged": "^13.1.0",
+    "prettier": "^2.8.1",
+    "rimraf": "^3.0.2",
+    "ts-dedent": "^2.2.0",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.9.4"
   }
 }

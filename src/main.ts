@@ -7,7 +7,6 @@ async function run() {
   const token = core.getInput('repo-token', { required: true });
   const includeTitle = parseInt(core.getInput('include-title', { required: false }));
 
-
   const issue_number = getIssueOrPullRequestNumber();
   if (issue_number === undefined) {
     console.log('Could not get issue or pull request number from context, exiting');
@@ -55,7 +54,7 @@ async function run() {
     addLabels(token, issue_number, addLabel)
   }
 
-  removeLabelItems.forEach(function (label, index) {
+  removeLabelItems.forEach(function (label) {
     console.log(`Removing label ${label} from issue #${issue_number}`)
     removeLabel(token, issue_number, label)
   });
@@ -75,11 +74,11 @@ function getIssueOrPullRequestNumber(): number | undefined {
   return;
 }
 
-function issueOrPullRequestHasLabel(label: String): number | undefined {
+function issueOrPullRequestHasLabel(label: string): number | undefined {
   const issue = context.payload.issue;
   if (issue) {
     return issue.labels.find(
-      (str: String) => str == label
+      ({name: name}) => name === label
     );
   }
 
@@ -120,7 +119,7 @@ function getIssueOrPullRequestTitle(): string | undefined {
 }
 
 function checkLabel(issue_body: string, name: string): boolean {
-  var found = issue_body.match(`\[x\] ${name}`)
+  const found = issue_body.match(`\\[x\\] ${name}`)
   if(!found) {
     return false
   }

@@ -13,7 +13,7 @@ jobs:
           cache: yarn
       - run: yarn
       - run: yarn lint
-  create_labels:
+  add_labels:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3

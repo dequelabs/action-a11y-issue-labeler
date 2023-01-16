@@ -9766,7 +9766,7 @@ function run() {
             console.log(`Adding labels ${addLabel.toString()} to issue #${issue_number}`);
             addLabels(token, issue_number, addLabel);
         }
-        removeLabelItems.forEach(function (label, index) {
+        removeLabelItems.forEach(function (label) {
             console.log(`Removing label ${label} from issue #${issue_number}`);
             removeLabel(token, issue_number, label);
         });
@@ -9786,7 +9786,7 @@ function getIssueOrPullRequestNumber() {
 function issueOrPullRequestHasLabel(label) {
     const issue = github_1.context.payload.issue;
     if (issue) {
-        return issue.labels.find((str) => str == label);
+        return issue.labels.find(({ name: name }) => name === label);
     }
     const pull_request = github_1.context.payload.pull_request;
     if (pull_request) {
@@ -9817,7 +9817,7 @@ function getIssueOrPullRequestTitle() {
     return;
 }
 function checkLabel(issue_body, name) {
-    var found = issue_body.match(`\[x\] ${name}`);
+    const found = issue_body.match(`\\[x\\] ${name}`);
     if (!found) {
         return false;
     }

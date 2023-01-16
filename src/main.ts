@@ -40,12 +40,20 @@ async function run() {
   }
   issueContent += issue_body
 
+  getIssueOrPullRequestLabels()?.forEach(({name: name}) => {
+    if (!checkLabel(issueContent, name)) {
+      removeLabelItems.push(name)
+    }
+  })
+    
+  removeLabelItems.forEach(function (label) {
+    console.log(`Removing label ${label} from issue #${issue_number}`)
+    removeLabel(token, issue_number, label)
+  });
+  
   labels.forEach(({name: name}) => {
     if (checkLabel(issueContent, name)) {
       addLabel.push(name)
-    }
-    else {
-      removeLabelItems.push(name)
     }}
   );
 
@@ -54,10 +62,7 @@ async function run() {
     addLabels(token, issue_number, addLabel)
   }
 
-  removeLabelItems.forEach(function (label) {
-    console.log(`Removing label ${label} from issue #${issue_number}`)
-    removeLabel(token, issue_number, label)
-  });
+
 }
 
 function getIssueOrPullRequestNumber(): number | undefined {
@@ -99,6 +104,20 @@ function getIssueOrPullRequestBody(): string | undefined {
   const pull_request = context.payload.pull_request;
   if (pull_request) {
     return pull_request.body;
+  }
+
+  return;
+}
+
+function getIssueOrPullRequestLabels(): [] | undefined {
+  const issue = context.payload.issue;
+  if (issue) {
+    return issue.labels;
+  }
+
+  const pull_request = context.payload.pull_request;
+  if (pull_request) {
+    return pull_request.labels;
   }
 
   return;

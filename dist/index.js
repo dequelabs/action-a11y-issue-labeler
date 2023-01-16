@@ -9723,6 +9723,7 @@ const core = __importStar(__nccwpck_require__(2186));
 const github_1 = __nccwpck_require__(5438);
 const labels_1 = __importDefault(__nccwpck_require__(7402));
 function run() {
+    var _a;
     return __awaiter(this, void 0, void 0, function* () {
         // Configuration parameters
         const token = core.getInput('repo-token', { required: true });
@@ -9754,22 +9755,24 @@ function run() {
             issueContent += `${issue_title}\n\n`;
         }
         issueContent += issue_body;
+        (_a = getIssueOrPullRequestLabels()) === null || _a === void 0 ? void 0 : _a.forEach(({ name: name }) => {
+            if (!checkLabel(issueContent, name)) {
+                removeLabelItems.push(name);
+            }
+        });
+        removeLabelItems.forEach(function (label) {
+            console.log(`Removing label ${label} from issue #${issue_number}`);
+            removeLabel(token, issue_number, label);
+        });
         labels_1.default.forEach(({ name: name }) => {
             if (checkLabel(issueContent, name)) {
                 addLabel.push(name);
-            }
-            else {
-                removeLabelItems.push(name);
             }
         });
         if (addLabel.length > 0) {
             console.log(`Adding labels ${addLabel.toString()} to issue #${issue_number}`);
             addLabels(token, issue_number, addLabel);
         }
-        removeLabelItems.forEach(function (label) {
-            console.log(`Removing label ${label} from issue #${issue_number}`);
-            removeLabel(token, issue_number, label);
-        });
     });
 }
 function getIssueOrPullRequestNumber() {
@@ -9802,6 +9805,17 @@ function getIssueOrPullRequestBody() {
     const pull_request = github_1.context.payload.pull_request;
     if (pull_request) {
         return pull_request.body;
+    }
+    return;
+}
+function getIssueOrPullRequestLabels() {
+    const issue = github_1.context.payload.issue;
+    if (issue) {
+        return issue.labels;
+    }
+    const pull_request = github_1.context.payload.pull_request;
+    if (pull_request) {
+        return pull_request.labels;
     }
     return;
 }

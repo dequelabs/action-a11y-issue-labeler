@@ -1,6 +1,6 @@
 import * as core from '@actions/core';
 import { context, getOctokit } from "@actions/github";
-import labels from './labels'
+import a11yLabels from './labels'
 
 async function run() {
   // Configuration parameters
@@ -39,33 +39,49 @@ async function run() {
     issueContent += `${issue_title}\n\n`
   }
   issueContent += issue_body
+
   const currentLabels = getIssueOrPullRequestLabels()
   if(currentLabels) {
-    currentLabels.filter((label) => labels.find(l => l.name === label['name']) !== undefined).forEach(({name: name}) => {
+    currentLabels.filter((label) => a11yLabels.find(l => l.name === label['name']) !== undefined).forEach(({name: name}) => {
       if (!checkLabel(issueContent, name)) {
         removeLabelItems.push(name)
       }
     })
   }
   
-    
+  a11yLabels.forEach(({name: name}) => {
+    if (checkLabel(issueContent, name)) {
+      addLabel.push(`\\[x\\] ${name.replace('WCAG ', '')}`)
+    }}
+  );
+
+  if(checkLabel(issueContent, `\\[x\\] Discovered by Customer`)) {
+    addLabel.push('Customer')
+  } else if (currentLabels?.filter((label) => label['name'] === 'Customer')) {
+    removeLabelItems.push('Customer')
+  }
+
+  if(checkLabel(issueContent, `\\[x\\] Exists in Production`)) {
+    addLabel.push('Production')
+  } else if (currentLabels?.filter((label) => label['name'] === 'Production')) {
+    removeLabelItems.push('Production')
+  }
+
+  if(checkLabel(issueContent, `\\[x\\] Discovered during VPAT`)) {
+    addLabel.push('VPAT')
+  } else if (currentLabels?.filter((label) => label['name'] === 'VPAT')) {
+    removeLabelItems.push('VPAT')
+  }
+
   removeLabelItems.forEach(function (label) {
     console.log(`Removing label ${label} from issue #${issue_number}`)
     removeLabel(token, issue_number, label)
   });
 
-  labels.forEach(({name: name}) => {
-    if (checkLabel(issueContent, name)) {
-      addLabel.push(name)
-    }}
-  );
-
   if (addLabel.length > 0) {
     console.log(`Adding labels ${addLabel.toString()} to issue #${issue_number}`)
     addLabels(token, issue_number, addLabel)
   }
-
-
 }
 
 function getIssueOrPullRequestNumber(): number | undefined {
@@ -141,7 +157,7 @@ function getIssueOrPullRequestTitle(): string | undefined {
 }
 
 function checkLabel(issue_body: string, name: string): boolean {
-  const found = issue_body.match(`\\[x\\] ${name.replace('WCAG ', '')}`)
+  const found = issue_body.match(name)
   if(!found) {
     return false
   }

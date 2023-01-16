@@ -11,8 +11,6 @@ export interface Label {
     { name: "Serious" },
     { name: "Moderate" },
     { name: "Minor" },
-    { name: "production" },
-    { name: "VPAT" },
     { name: "WCAG 1.1.1", description: "Non-text Content" },
     {
       name: "WCAG 1.2.1",

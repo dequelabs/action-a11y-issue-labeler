@@ -9608,8 +9608,6 @@ const labels = [
     { name: "Serious" },
     { name: "Moderate" },
     { name: "Minor" },
-    { name: "production" },
-    { name: "VPAT" },
     { name: "WCAG 1.1.1", description: "Non-text Content" },
     {
         name: "WCAG 1.2.1",
@@ -9762,14 +9760,32 @@ function run() {
                 }
             });
         }
+        labels_1.default.forEach(({ name: name }) => {
+            if (checkLabel(issueContent, name)) {
+                addLabel.push(`\\[x\\] ${name.replace('WCAG ', '')}`);
+            }
+        });
+        if (checkLabel(issueContent, `\\[x\\] Discovered by Customer`)) {
+            addLabel.push('Customer');
+        }
+        else if (currentLabels === null || currentLabels === void 0 ? void 0 : currentLabels.filter((label) => label['name'] === 'Customer')) {
+            removeLabelItems.push('Customer');
+        }
+        if (checkLabel(issueContent, `\\[x\\] Exists in Production`)) {
+            addLabel.push('Production');
+        }
+        else if (currentLabels === null || currentLabels === void 0 ? void 0 : currentLabels.filter((label) => label['name'] === 'Production')) {
+            removeLabelItems.push('Production');
+        }
+        if (checkLabel(issueContent, `\\[x\\] Discovered during VPAT`)) {
+            addLabel.push('VPAT');
+        }
+        else if (currentLabels === null || currentLabels === void 0 ? void 0 : currentLabels.filter((label) => label['name'] === 'VPAT')) {
+            removeLabelItems.push('VPAT');
+        }
         removeLabelItems.forEach(function (label) {
             console.log(`Removing label ${label} from issue #${issue_number}`);
             removeLabel(token, issue_number, label);
-        });
-        labels_1.default.forEach(({ name: name }) => {
-            if (checkLabel(issueContent, name)) {
-                addLabel.push(name);
-            }
         });
         if (addLabel.length > 0) {
             console.log(`Adding labels ${addLabel.toString()} to issue #${issue_number}`);
@@ -9833,7 +9849,7 @@ function getIssueOrPullRequestTitle() {
     return;
 }
 function checkLabel(issue_body, name) {
-    const found = issue_body.match(`\\[x\\] ${name.replace('WCAG ', '')}`);
+    const found = issue_body.match(name);
     if (!found) {
         return false;
     }

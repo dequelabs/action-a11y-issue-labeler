@@ -1,4 +1,4 @@
-name: Deque Accessibility Metric Tracking Job
+name: Deque Accessibility Metric Labeling Job
 on:
   issues:
     types: [opened, edited]

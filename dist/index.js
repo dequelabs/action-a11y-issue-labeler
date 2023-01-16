@@ -9831,7 +9831,7 @@ function getIssueOrPullRequestTitle() {
     return;
 }
 function checkLabel(issue_body, name) {
-    const found = issue_body.match(`\\[x\\] ${name}`);
+    const found = issue_body.match(`\\[x\\] ${name.replace('WCAG ', '')}`);
     if (!found) {
         return false;
     }

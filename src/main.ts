@@ -50,7 +50,7 @@ async function run() {
     console.log(`Removing label ${label} from issue #${issue_number}`)
     removeLabel(token, issue_number, label)
   });
-  
+
   labels.forEach(({name: name}) => {
     if (checkLabel(issueContent, name)) {
       addLabel.push(name)
@@ -138,7 +138,7 @@ function getIssueOrPullRequestTitle(): string | undefined {
 }
 
 function checkLabel(issue_body: string, name: string): boolean {
-  const found = issue_body.match(`\\[x\\] ${name}`)
+  const found = issue_body.match(`\\[x\\] ${name.replace('WCAG ', '')}`)
   if(!found) {
     return false
   }

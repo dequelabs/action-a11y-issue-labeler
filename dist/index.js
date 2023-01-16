@@ -9723,7 +9723,6 @@ const core = __importStar(__nccwpck_require__(2186));
 const github_1 = __nccwpck_require__(5438);
 const labels_1 = __importDefault(__nccwpck_require__(7402));
 function run() {
-    var _a;
     return __awaiter(this, void 0, void 0, function* () {
         // Configuration parameters
         const token = core.getInput('repo-token', { required: true });
@@ -9755,11 +9754,14 @@ function run() {
             issueContent += `${issue_title}\n\n`;
         }
         issueContent += issue_body;
-        (_a = getIssueOrPullRequestLabels()) === null || _a === void 0 ? void 0 : _a.forEach(({ name: name }) => {
-            if (!checkLabel(issueContent, name)) {
-                removeLabelItems.push(name);
-            }
-        });
+        const currentLabels = getIssueOrPullRequestLabels();
+        if (currentLabels) {
+            currentLabels.filter((label) => labels_1.default.find(l => l.name === label['name']) !== undefined).forEach(({ name: name }) => {
+                if (!checkLabel(issueContent, name)) {
+                    removeLabelItems.push(name);
+                }
+            });
+        }
         removeLabelItems.forEach(function (label) {
             console.log(`Removing label ${label} from issue #${issue_number}`);
             removeLabel(token, issue_number, label);

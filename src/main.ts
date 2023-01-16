@@ -39,12 +39,15 @@ async function run() {
     issueContent += `${issue_title}\n\n`
   }
   issueContent += issue_body
-
-  getIssueOrPullRequestLabels()?.forEach(({name: name}) => {
-    if (!checkLabel(issueContent, name)) {
-      removeLabelItems.push(name)
-    }
-  })
+  const currentLabels = getIssueOrPullRequestLabels()
+  if(currentLabels) {
+    currentLabels.filter((label) => labels.find(l => l.name === label['name']) !== undefined).forEach(({name: name}) => {
+      if (!checkLabel(issueContent, name)) {
+        removeLabelItems.push(name)
+      }
+    })
+  }
+  
     
   removeLabelItems.forEach(function (label) {
     console.log(`Removing label ${label} from issue #${issue_number}`)

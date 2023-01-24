@@ -41,7 +41,7 @@ async function run() {
   issueContent += issue_body
   
   const currentLabels = getIssueOrPullRequestLabels()
-  console.log(`Current labels: ${currentLabels}`)
+  console.log(`Current labels: ${currentLabels?.flatMap(({name: n}) => (n))}`)
 
   a11yLabels.forEach(({name: name}) => {
     if (checkLabel(issueContent, `\\[x\\] ${name.replace('WCAG ', '')} `)) {

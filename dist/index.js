@@ -9753,7 +9753,7 @@ function run() {
         }
         issueContent += issue_body;
         const currentLabels = getIssueOrPullRequestLabels();
-        console.log(`Current labels: ${currentLabels}`);
+        console.log(`Current labels: ${currentLabels === null || currentLabels === void 0 ? void 0 : currentLabels.flatMap(({ name: n }) => (n))}`);
         labels_1.default.forEach(({ name: name }) => {
             if (checkLabel(issueContent, `\\[x\\] ${name.replace('WCAG ', '')} `)) {
                 addLabel.push(name);

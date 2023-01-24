@@ -33,14 +33,14 @@ async function run() {
 
   const addLabel: string[] = []
   const removeLabelItems: string[] = []
-
+  const currentLabels: [] = []
   let issueContent = ""
   if (includeTitle === 1) {
     issueContent += `${issue_title}\n\n`
   }
   issueContent += issue_body
 
-  const currentLabels = getIssueOrPullRequestLabels()
+  currentLabels.push.apply(getIssueOrPullRequestLabels())
   if(currentLabels) {
     currentLabels.filter((label) => a11yLabels.find(l => l.name === label['name']) !== undefined).forEach(({name: name}) => {
       if (!checkLabel(issueContent, name)) {
@@ -57,19 +57,19 @@ async function run() {
 
   if(checkLabel(issueContent, `\\[x\\] Discovered by Customer`)) {
     addLabel.push('Customer')
-  } else if (currentLabels?.filter((label) => label['name'] === 'Customer')) {
+  } else if (hasLabel(currentLabels,'Customer')) {
     removeLabelItems.push('Customer')
   }
 
   if(checkLabel(issueContent, `\\[x\\] Exists in Production`)) {
     addLabel.push('Production')
-  } else if (currentLabels?.filter((label) => label['name'] === 'Production')) {
+  } else if (hasLabel(currentLabels,'Production')) {
     removeLabelItems.push('Production')
   }
 
   if(checkLabel(issueContent, `\\[x\\] Discovered during VPAT`)) {
     addLabel.push('VPAT')
-  } else if (currentLabels?.filter((label) => label['name'] === 'VPAT')) {
+  } else if (hasLabel(currentLabels,'VPAT')) {
     removeLabelItems.push('VPAT')
   }
 
@@ -155,6 +155,16 @@ function getIssueOrPullRequestTitle(): string | undefined {
 
   return;
 }
+
+
+function hasLabel(labels: any[], label: string): boolean {
+  const found = labels.map(({name: n}) => (n)).includes(label)
+  if(!found) {
+    return false
+  }
+  return true
+}
+
 
 function checkLabel(issue_body: string, name: string): boolean {
   const found = issue_body.match(name)

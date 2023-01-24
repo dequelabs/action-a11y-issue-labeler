@@ -9747,12 +9747,13 @@ function run() {
         }
         const addLabel = [];
         const removeLabelItems = [];
+        const currentLabels = [];
         let issueContent = "";
         if (includeTitle === 1) {
             issueContent += `${issue_title}\n\n`;
         }
         issueContent += issue_body;
-        const currentLabels = getIssueOrPullRequestLabels();
+        currentLabels.push.apply(getIssueOrPullRequestLabels());
         if (currentLabels) {
             currentLabels.filter((label) => labels_1.default.find(l => l.name === label['name']) !== undefined).forEach(({ name: name }) => {
                 if (!checkLabel(issueContent, name)) {
@@ -9768,19 +9769,19 @@ function run() {
         if (checkLabel(issueContent, `\\[x\\] Discovered by Customer`)) {
             addLabel.push('Customer');
         }
-        else if (currentLabels === null || currentLabels === void 0 ? void 0 : currentLabels.filter((label) => label['name'] === 'Customer')) {
+        else if (hasLabel(currentLabels, 'Customer')) {
             removeLabelItems.push('Customer');
         }
         if (checkLabel(issueContent, `\\[x\\] Exists in Production`)) {
             addLabel.push('Production');
         }
-        else if (currentLabels === null || currentLabels === void 0 ? void 0 : currentLabels.filter((label) => label['name'] === 'Production')) {
+        else if (hasLabel(currentLabels, 'Production')) {
             removeLabelItems.push('Production');
         }
         if (checkLabel(issueContent, `\\[x\\] Discovered during VPAT`)) {
             addLabel.push('VPAT');
         }
-        else if (currentLabels === null || currentLabels === void 0 ? void 0 : currentLabels.filter((label) => label['name'] === 'VPAT')) {
+        else if (hasLabel(currentLabels, 'VPAT')) {
             removeLabelItems.push('VPAT');
         }
         removeLabelItems.forEach(function (label) {
@@ -9847,6 +9848,13 @@ function getIssueOrPullRequestTitle() {
         return pull_request.title;
     }
     return;
+}
+function hasLabel(labels, label) {
+    const found = labels.map(({ name: n }) => (n)).includes(label);
+    if (!found) {
+        return false;
+    }
+    return true;
 }
 function checkLabel(issue_body, name) {
     const found = issue_body.match(name);

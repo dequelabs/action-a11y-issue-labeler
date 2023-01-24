@@ -40,8 +40,8 @@ async function run() {
   }
   issueContent += issue_body
   
-  const currentLabels = getIssueOrPullRequestLabels()
-  console.log(`Current labels: ${currentLabels?.flatMap(({name: n}) => (n))}`)
+  const currentLabels = getIssueOrPullRequestLabels()?.flatMap(({name: n}) => (n))
+  console.log(`Current labels: ${currentLabels}`)
 
   a11yLabels.forEach(({name: name}) => {
     if (checkLabel(issueContent, `\\[x\\] ${name.replace('WCAG ', '')} `)) {
@@ -154,17 +154,10 @@ function getIssueOrPullRequestTitle(): string | undefined {
 }
 
 
-function hasLabel(labels: any[] | undefined , label: string): boolean {
+function hasLabel(labels: string[] | undefined , label: string): boolean {
   if(!labels) 
     return false
-  for(let i = 0; i < labels?.length; i++) {
-    const l = labels[i]
-    if(l.name === label) {
-      return true;
-    }
-    // return labels.map(({name: n}) => (n)).includes(label)
-  }
-  return false;
+  return labels.includes(label)
 }
 
 

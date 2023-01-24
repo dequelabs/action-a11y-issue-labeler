@@ -9721,6 +9721,7 @@ const core = __importStar(__nccwpck_require__(2186));
 const github_1 = __nccwpck_require__(5438);
 const labels_1 = __importDefault(__nccwpck_require__(7402));
 function run() {
+    var _a;
     return __awaiter(this, void 0, void 0, function* () {
         // Configuration parameters
         const token = core.getInput('repo-token', { required: true });
@@ -9752,8 +9753,8 @@ function run() {
             issueContent += `${issue_title}\n\n`;
         }
         issueContent += issue_body;
-        const currentLabels = getIssueOrPullRequestLabels();
-        console.log(`Current labels: ${currentLabels === null || currentLabels === void 0 ? void 0 : currentLabels.flatMap(({ name: n }) => (n))}`);
+        const currentLabels = (_a = getIssueOrPullRequestLabels()) === null || _a === void 0 ? void 0 : _a.flatMap(({ name: n }) => (n));
+        console.log(`Current labels: ${currentLabels}`);
         labels_1.default.forEach(({ name: name }) => {
             if (checkLabel(issueContent, `\\[x\\] ${name.replace('WCAG ', '')} `)) {
                 addLabel.push(name);
@@ -9848,14 +9849,7 @@ function getIssueOrPullRequestTitle() {
 function hasLabel(labels, label) {
     if (!labels)
         return false;
-    for (let i = 0; i < (labels === null || labels === void 0 ? void 0 : labels.length); i++) {
-        const l = labels[i];
-        if (l.name === label) {
-            return true;
-        }
-        // return labels.map(({name: n}) => (n)).includes(label)
-    }
-    return false;
+    return labels.includes(label);
 }
 function checkLabel(issue_body, name) {
     const found = issue_body.match(name);

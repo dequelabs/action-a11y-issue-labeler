@@ -50,7 +50,7 @@ async function run() {
   }
   
   a11yLabels.forEach(({name: name}) => {
-    if (checkLabel(issueContent, `\\[x\\] ${name.replace('WCAG ', '')}`)) {
+    if (checkLabel(issueContent, `\\[x\\] ${name.replace('WCAG ', '')} `)) {
       addLabel.push(name)
     }}
   );

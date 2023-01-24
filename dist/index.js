@@ -9762,7 +9762,7 @@ function run() {
             });
         }
         labels_1.default.forEach(({ name: name }) => {
-            if (checkLabel(issueContent, `\\[x\\] ${name.replace('WCAG ', '')}`)) {
+            if (checkLabel(issueContent, `\\[x\\] ${name.replace('WCAG ', '')} `)) {
                 addLabel.push(name);
             }
         });

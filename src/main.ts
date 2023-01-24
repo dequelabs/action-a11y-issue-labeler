@@ -41,6 +41,7 @@ async function run() {
   issueContent += issue_body
 
   currentLabels.push.apply(getIssueOrPullRequestLabels())
+  console.log(`Current labels: ${currentLabels}`)
   
   a11yLabels.forEach(({name: name}) => {
     if (checkLabel(issueContent, `\\[x\\] ${name.replace('WCAG ', '')} `)) {
@@ -153,7 +154,7 @@ function getIssueOrPullRequestTitle(): string | undefined {
 }
 
 
-function hasLabel(labels: any[], label: string): boolean {
+function hasLabel(labels: {name: string}[], label: string): boolean {
   return labels.map(({name: n}) => (n)).includes(label)
 }
 

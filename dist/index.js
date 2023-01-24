@@ -9747,13 +9747,12 @@ function run() {
         }
         const addLabel = [];
         const removeLabelItems = [];
-        const currentLabels = [];
         let issueContent = "";
         if (includeTitle === 1) {
             issueContent += `${issue_title}\n\n`;
         }
         issueContent += issue_body;
-        currentLabels.push.apply(getIssueOrPullRequestLabels());
+        const currentLabels = getIssueOrPullRequestLabels();
         console.log(`Current labels: ${currentLabels}`);
         labels_1.default.forEach(({ name: name }) => {
             if (checkLabel(issueContent, `\\[x\\] ${name.replace('WCAG ', '')} `)) {
@@ -9827,13 +9826,13 @@ function getIssueOrPullRequestBody() {
 function getIssueOrPullRequestLabels() {
     const issue = github_1.context.payload.issue;
     if (issue) {
-        return issue.labels;
+        return issue === null || issue === void 0 ? void 0 : issue.labels;
     }
     const pull_request = github_1.context.payload.pull_request;
     if (pull_request) {
         return pull_request.labels;
     }
-    return;
+    return [];
 }
 function getIssueOrPullRequestTitle() {
     const issue = github_1.context.payload.issue;
@@ -9847,7 +9846,16 @@ function getIssueOrPullRequestTitle() {
     return;
 }
 function hasLabel(labels, label) {
-    return labels.map(({ name: n }) => (n)).includes(label);
+    if (!labels)
+        return false;
+    for (let i = 0; i < (labels === null || labels === void 0 ? void 0 : labels.length); i++) {
+        const l = labels[i];
+        if (l.name === label) {
+            return true;
+        }
+        // return labels.map(({name: n}) => (n)).includes(label)
+    }
+    return false;
 }
 function checkLabel(issue_body, name) {
     const found = issue_body.match(name);

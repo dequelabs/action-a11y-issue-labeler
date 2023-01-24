@@ -33,16 +33,16 @@ async function run() {
 
   const addLabel: string[] = []
   const removeLabelItems: string[] = []
-  const currentLabels: [] = []
+
   let issueContent = ""
   if (includeTitle === 1) {
     issueContent += `${issue_title}\n\n`
   }
   issueContent += issue_body
-
-  currentLabels.push.apply(getIssueOrPullRequestLabels())
-  console.log(`Current labels: ${currentLabels}`)
   
+  const currentLabels = getIssueOrPullRequestLabels()
+  console.log(`Current labels: ${currentLabels}`)
+
   a11yLabels.forEach(({name: name}) => {
     if (checkLabel(issueContent, `\\[x\\] ${name.replace('WCAG ', '')} `)) {
       addLabel.push(name)
@@ -128,7 +128,7 @@ function getIssueOrPullRequestBody(): string | undefined {
 function getIssueOrPullRequestLabels(): [] | undefined {
   const issue = context.payload.issue;
   if (issue) {
-    return issue.labels;
+    return issue?.labels;
   }
 
   const pull_request = context.payload.pull_request;
@@ -136,7 +136,7 @@ function getIssueOrPullRequestLabels(): [] | undefined {
     return pull_request.labels;
   }
 
-  return;
+  return [];
 }
 
 function getIssueOrPullRequestTitle(): string | undefined {
@@ -154,8 +154,17 @@ function getIssueOrPullRequestTitle(): string | undefined {
 }
 
 
-function hasLabel(labels: {name: string}[], label: string): boolean {
-  return labels.map(({name: n}) => (n)).includes(label)
+function hasLabel(labels: any[] | undefined , label: string): boolean {
+  if(!labels) 
+    return false
+  for(let i = 0; i < labels?.length; i++) {
+    const l = labels[i]
+    if(l.name === label) {
+      return true;
+    }
+    // return labels.map(({name: n}) => (n)).includes(label)
+  }
+  return false;
 }
 
 

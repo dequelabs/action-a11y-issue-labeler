@@ -52,6 +52,36 @@ async function run() {
   }
   );
 
+  if(checkLabel(issueContent, `\\[x\\] Blocker`)) {
+    addLabel.push('Blocker')
+  } else if (hasLabel(currentLabels,'Blocker')) {
+    removeLabelItems.push('Blocker')
+  }
+
+  if(checkLabel(issueContent, `\\[x\\] Critical`)) {
+    addLabel.push('Critical')
+  } else if (hasLabel(currentLabels,'Critical')) {
+    removeLabelItems.push('Critical')
+  }
+
+  if(checkLabel(issueContent, `\\[x\\] Serious`)) {
+    addLabel.push('Serious')
+  } else if (hasLabel(currentLabels,'Serious')) {
+    removeLabelItems.push('Serious')
+  }
+  
+  if(checkLabel(issueContent, `\\[x\\] Moderate`)) {
+    addLabel.push('Moderate')
+  } else if (hasLabel(currentLabels,'Moderate')) {
+    removeLabelItems.push('Moderate')
+  }
+
+  if(checkLabel(issueContent, `\\[x\\] Minor`)) {
+    addLabel.push('Minor')
+  } else if (hasLabel(currentLabels,'Minor')) {
+    removeLabelItems.push('Minor')
+  }
+
   if(checkLabel(issueContent, `\\[x\\] Discovered by Customer`)) {
     addLabel.push('Customer')
   } else if (hasLabel(currentLabels,'Customer')) {

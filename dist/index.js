@@ -9603,11 +9603,6 @@ function wrappy (fn, cb) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 /** Labels are the VPAT related labels we'll add. */
 const labels = [
-    { name: "Blocker" },
-    { name: "Critical" },
-    { name: "Serious" },
-    { name: "Moderate" },
-    { name: "Minor" },
     { name: "WCAG 1.1.1", description: "Non-text Content" },
     {
         name: "WCAG 1.2.1",
@@ -9763,6 +9758,36 @@ function run() {
                 removeLabelItems.push(name);
             }
         });
+        if (checkLabel(issueContent, `\\[x\\] Blocker`)) {
+            addLabel.push('Blocker');
+        }
+        else if (hasLabel(currentLabels, 'Blocker')) {
+            removeLabelItems.push('Blocker');
+        }
+        if (checkLabel(issueContent, `\\[x\\] Critical`)) {
+            addLabel.push('Critical');
+        }
+        else if (hasLabel(currentLabels, 'Critical')) {
+            removeLabelItems.push('Critical');
+        }
+        if (checkLabel(issueContent, `\\[x\\] Serious`)) {
+            addLabel.push('Serious');
+        }
+        else if (hasLabel(currentLabels, 'Serious')) {
+            removeLabelItems.push('Serious');
+        }
+        if (checkLabel(issueContent, `\\[x\\] Moderate`)) {
+            addLabel.push('Moderate');
+        }
+        else if (hasLabel(currentLabels, 'Moderate')) {
+            removeLabelItems.push('Moderate');
+        }
+        if (checkLabel(issueContent, `\\[x\\] Minor`)) {
+            addLabel.push('Minor');
+        }
+        else if (hasLabel(currentLabels, 'Minor')) {
+            removeLabelItems.push('Minor');
+        }
         if (checkLabel(issueContent, `\\[x\\] Discovered by Customer`)) {
             addLabel.push('Customer');
         }

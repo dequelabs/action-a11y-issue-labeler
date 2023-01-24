@@ -6,20 +6,15 @@ export interface Label {
   
   /** Labels are the VPAT related labels we'll add. */
   const labels: ReadonlyArray<Label> = [
-    { name: "Blocker" },
-    { name: "Critical" },
-    { name: "Serious" },
-    { name: "Moderate" },
-    { name: "Minor" },
     { name: "WCAG 1.1.1", description: "Non-text Content" },
     {
-      name: "WCAG 1.2.1",
-      description: "Audio-only and Video-only (Prerecorded)",
+        name: "WCAG 1.2.1",
+        description: "Audio-only and Video-only (Prerecorded)",
     },
     { name: "WCAG 1.2.2", description: "Captions (Prerecorded)" },
     {
-      name: "WCAG 1.2.3",
-      description: "Audio Description or Media Alternative (Prerecorded)",
+        name: "WCAG 1.2.3",
+        description: "Audio Description or Media Alternative (Prerecorded)",
     },
     { name: "WCAG 1.3.1", description: "Info and Relationships" },
     { name: "WCAG 1.3.2", description: "Meaningful Sequence" },
@@ -49,8 +44,8 @@ export interface Label {
     { name: "WCAG 4.1.2", description: "Name, Role, Value" },
     { name: "WCAG 1.2.4", description: "Captions (Prerecorded)" },
     {
-      name: "WCAG 1.2.5",
-      description: "Audio Description or Media Alternative (Prerecorded)",
+        name: "WCAG 1.2.5",
+        description: "Audio Description or Media Alternative (Prerecorded)",
     },
     { name: "WCAG 1.3.4", description: "Orientation" },
     { name: "WCAG 1.3.5", description: "Identify Input Purpose" },
@@ -69,8 +64,8 @@ export interface Label {
     { name: "WCAG 3.2.4", description: "Consistent Identification" },
     { name: "WCAG 3.3.3", description: "Error Suggestion" },
     {
-      name: "WCAG 3.3.4",
-      description: "Error Prevention (Legal, Financial, Data)",
+        name: "WCAG 3.3.4",
+        description: "Error Prevention (Legal, Financial, Data)",
     },
     { name: "WCAG 4.1.3", description: "Status Messages" },
   ];

@@ -9754,13 +9754,6 @@ function run() {
         }
         issueContent += issue_body;
         currentLabels.push.apply(getIssueOrPullRequestLabels());
-        if (currentLabels) {
-            currentLabels.filter((label) => labels_1.default.find(l => l.name === label['name']) !== undefined).forEach(({ name: name }) => {
-                if (!checkLabel(issueContent, name)) {
-                    removeLabelItems.push(name);
-                }
-            });
-        }
         labels_1.default.forEach(({ name: name }) => {
             if (checkLabel(issueContent, `\\[x\\] ${name.replace('WCAG ', '')} `)) {
                 addLabel.push(name);
@@ -9853,11 +9846,7 @@ function getIssueOrPullRequestTitle() {
     return;
 }
 function hasLabel(labels, label) {
-    const found = labels.map(({ name: n }) => (n)).includes(label);
-    if (!found) {
-        return false;
-    }
-    return true;
+    return labels.map(({ name: n }) => (n)).includes(label);
 }
 function checkLabel(issue_body, name) {
     const found = issue_body.match(name);

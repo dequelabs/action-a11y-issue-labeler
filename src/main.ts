@@ -52,7 +52,10 @@ async function run() {
   a11yLabels.forEach(({name: name}) => {
     if (checkLabel(issueContent, `\\[x\\] ${name.replace('WCAG ', '')} `)) {
       addLabel.push(name)
-    }}
+    } else if (hasLabel(currentLabels, name)) {
+      removeLabelItems.push(name)
+    }
+  }
   );
 
   if(checkLabel(issueContent, `\\[x\\] Discovered by Customer`)) {

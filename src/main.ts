@@ -34,6 +34,10 @@ async function run() {
   const addLabel: string[] = []
   const removeLabelItems: string[] = []
 
+  if (issue_title.includes('[A11Y]') && !hasA11yLabel) {
+    addLabel.push('A11Y')
+  }
+
   let issueContent = ""
   if (includeTitle === 1) {
     issueContent += `${issue_title}\n\n`

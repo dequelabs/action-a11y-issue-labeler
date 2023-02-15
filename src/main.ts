@@ -26,7 +26,7 @@ async function run() {
   }
 
   const hasA11yLabel = issueOrPullRequestHasLabel("A11Y");
-  if (!hasA11yLabel) {
+  if (!hasA11yLabel && !issue_title.includes('[A11Y]')) {
     console.log('Not an accessibility issue, skipping.')
     return;
   }

@@ -14023,11 +14023,17 @@ function removeLabel(token, issue_number, name) {
 }
 function getMeticsEnabled(token, configurationPath) {
     return __awaiter(this, void 0, void 0, function* () {
-        const configurationContent = yield fetchContent(token, configurationPath);
-        // loads (hopefully) a `{[label:string]: string | StringOrMatchConfig[]}`, but is `any`:
-        const configObject = yaml.load(configurationContent);
-        // transform `any` => `Map<string,StringOrMatchConfig[]>` or throw if yaml is malformed:
-        return configObject.enabled;
+        try {
+            const configurationContent = yield fetchContent(token, configurationPath);
+            // loads (hopefully) a `{[label:string]: string | StringOrMatchConfig[]}`, but is `any`:
+            const configObject = yaml.load(configurationContent);
+            // transform `any` => `Map<string,StringOrMatchConfig[]>` or throw if yaml is malformed:
+            return configObject.enabled;
+        }
+        catch (error) {
+            console.log("Unable to retrieve .github/a11y-metrics.yaml, failing.");
+            return false;
+        }
     });
 }
 function fetchContent(token, repoPath) {

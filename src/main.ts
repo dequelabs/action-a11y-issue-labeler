@@ -241,16 +241,21 @@ async function getMeticsEnabled(
   token: string,
   configurationPath: string
 ): Promise<boolean> {
-  const configurationContent: string = await fetchContent(
-    token,
-    configurationPath
-  );
+  try {
+    const configurationContent: string = await fetchContent(
+      token,
+      configurationPath
+    );
+  
+    // loads (hopefully) a `{[label:string]: string | StringOrMatchConfig[]}`, but is `any`:
+    const configObject: any = yaml.load(configurationContent);
 
-  // loads (hopefully) a `{[label:string]: string | StringOrMatchConfig[]}`, but is `any`:
-  const configObject: any = yaml.load(configurationContent);
-
-  // transform `any` => `Map<string,StringOrMatchConfig[]>` or throw if yaml is malformed:
-  return configObject.enabled;
+    // transform `any` => `Map<string,StringOrMatchConfig[]>` or throw if yaml is malformed:
+    return configObject.enabled;
+  } catch (error) {
+    console.log("Unable to retrieve .github/a11y-metrics.yaml, failing.")
+    return false;
+  }
 }
 
 async function fetchContent(

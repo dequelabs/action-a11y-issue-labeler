@@ -7,7 +7,7 @@ async function run() {
   // Configuration parameters
   const token = core.getInput('repo-token', { required: true });
   const includeTitle = parseInt(core.getInput('include-title', { required: false }));
-  const a11yMetricsConfigPath = '.github/a11y-metrics.config';
+  const a11yMetricsConfigPath = '.github/a11y-metrics.yaml';
   const metricsEnabled: boolean = await getMeticsEnabled(token, a11yMetricsConfigPath);
   if (!metricsEnabled) {
     console.log('Metrics are not enabled, exiting.')

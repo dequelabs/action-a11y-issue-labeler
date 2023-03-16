@@ -1,11 +1,18 @@
 import * as core from '@actions/core';
 import { context, getOctokit } from "@actions/github";
 import a11yLabels from './labels'
+import * as yaml from 'js-yaml';
 
 async function run() {
   // Configuration parameters
   const token = core.getInput('repo-token', { required: true });
   const includeTitle = parseInt(core.getInput('include-title', { required: false }));
+  const a11yMetricsConfigPath = '.github/a11y-metrics.config';
+  const metricsEnabled: boolean = await getMeticsEnabled(token, a11yMetricsConfigPath);
+  if (!metricsEnabled) {
+    console.log('Metrics are not enabled, exiting.')
+    return;
+  }
 
   const issue_number = getIssueOrPullRequestNumber();
   if (issue_number === undefined) {
@@ -228,6 +235,47 @@ async function removeLabel(
     issue_number: issue_number,
     name: name
   });
+}
+
+async function getMeticsEnabled(
+  token: string,
+  configurationPath: string
+): Promise<boolean> {
+  const configurationContent: string = await fetchContent(
+    token,
+    configurationPath
+  );
+
+  // loads (hopefully) a `{[label:string]: string | StringOrMatchConfig[]}`, but is `any`:
+  const configObject: any = yaml.load(configurationContent);
+
+  // transform `any` => `Map<string,StringOrMatchConfig[]>` or throw if yaml is malformed:
+  return areMetricsEnabled(configObject);
+}
+
+async function fetchContent(
+  token: string,
+  repoPath: string
+): Promise<string> {
+  const response: any = await getOctokit(token).rest.repos.getContent({
+    owner: context.repo.owner,
+    repo: context.repo.repo,
+    path: repoPath,
+    ref: context.sha
+  });
+
+  return Buffer.from(response.data.content, response.data.encoding).toString();
+}
+
+function areMetricsEnabled(
+  configObject: any
+): boolean {
+  for(const key in configObject) {
+    if (key === 'enabled') {
+      return true;
+    }
+  }
+  return false;
 }
 
 run();

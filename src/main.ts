@@ -250,7 +250,7 @@ async function getMeticsEnabled(
   const configObject: any = yaml.load(configurationContent);
 
   // transform `any` => `Map<string,StringOrMatchConfig[]>` or throw if yaml is malformed:
-  return areMetricsEnabled(configObject);
+  return configObject.enabled;
 }
 
 async function fetchContent(
@@ -265,17 +265,6 @@ async function fetchContent(
   });
 
   return Buffer.from(response.data.content, response.data.encoding).toString();
-}
-
-function areMetricsEnabled(
-  configObject: any
-): boolean {
-  for(const key in configObject) {
-    if (key === 'enabled') {
-      return true;
-    }
-  }
-  return false;
 }
 
 run();

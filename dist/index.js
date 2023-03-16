@@ -14027,7 +14027,7 @@ function getMeticsEnabled(token, configurationPath) {
         // loads (hopefully) a `{[label:string]: string | StringOrMatchConfig[]}`, but is `any`:
         const configObject = yaml.load(configurationContent);
         // transform `any` => `Map<string,StringOrMatchConfig[]>` or throw if yaml is malformed:
-        return areMetricsEnabled(configObject);
+        return configObject.enabled;
     });
 }
 function fetchContent(token, repoPath) {
@@ -14040,14 +14040,6 @@ function fetchContent(token, repoPath) {
         });
         return Buffer.from(response.data.content, response.data.encoding).toString();
     });
-}
-function areMetricsEnabled(configObject) {
-    for (const key in configObject) {
-        if (key === 'enabled') {
-            return true;
-        }
-    }
-    return false;
 }
 run();
 

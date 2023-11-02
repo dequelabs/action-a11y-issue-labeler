@@ -13824,14 +13824,14 @@ const core = __importStar(__nccwpck_require__(2186));
 const github_1 = __nccwpck_require__(5438);
 const labels_1 = __importDefault(__nccwpck_require__(7402));
 const yaml = __importStar(__nccwpck_require__(1917));
+const assert_1 = __importDefault(__nccwpck_require__(9491));
 function run() {
     var _a;
     return __awaiter(this, void 0, void 0, function* () {
         // Configuration parameters
         const token = core.getInput('repo-token', { required: true });
         const includeTitle = parseInt(core.getInput('include-title', { required: false }));
-        const a11yMetricsConfigPath = '.github/a11y-metrics.yaml';
-        const metricsEnabled = yield getMeticsEnabled(token, a11yMetricsConfigPath);
+        const metricsEnabled = yield getMeticsEnabled(token);
         if (!metricsEnabled) {
             console.log('Metrics are not enabled, exiting.');
             return;
@@ -14021,30 +14021,42 @@ function removeLabel(token, issue_number, name) {
         });
     });
 }
-function getMeticsEnabled(token, configurationPath) {
+function getMeticsEnabled(token) {
     return __awaiter(this, void 0, void 0, function* () {
-        try {
-            const configurationContent = yield fetchContent(token, configurationPath);
-            // loads (hopefully) a `{[label:string]: string | StringOrMatchConfig[]}`, but is `any`:
-            const configObject = yaml.load(configurationContent);
-            // transform `any` => `Map<string,StringOrMatchConfig[]>` or throw if yaml is malformed:
-            return configObject.enabled;
+        const supportedFileExtensions = ['yaml', 'yml'];
+        const result = false;
+        for (const fileExtension of supportedFileExtensions) {
+            const filePath = `.github/a11y-metrics.${fileExtension}`;
+            const content = yield fetchContent(token, filePath);
+            if (content) {
+                try {
+                    const configObject = yaml.load(content);
+                    assert_1.default.ok(configObject, `Invalid configuration in ${filePath}`);
+                    assert_1.default.strictEqual(typeof configObject.enabled, 'boolean', `Invalid "enabled" property in ${filePath}`);
+                    return configObject.enabled;
+                }
+                catch (error) {
+                    console.log(`Invalid yaml in ${filePath}`);
+                }
+            }
         }
-        catch (error) {
-            console.log("Unable to retrieve .github/a11y-metrics.yaml, failing.");
-            return false;
-        }
+        return result;
     });
 }
-function fetchContent(token, repoPath) {
+function fetchContent(token, path) {
     return __awaiter(this, void 0, void 0, function* () {
-        const response = yield (0, github_1.getOctokit)(token).rest.repos.getContent({
-            owner: github_1.context.repo.owner,
-            repo: github_1.context.repo.repo,
-            path: repoPath,
-            ref: github_1.context.sha
-        });
-        return Buffer.from(response.data.content, response.data.encoding).toString();
+        try {
+            const response = yield (0, github_1.getOctokit)(token).rest.repos.getContent({
+                owner: github_1.context.repo.owner,
+                repo: github_1.context.repo.repo,
+                path,
+                ref: github_1.context.sha
+            });
+            return Buffer.from(response.data.content, response.data.encoding).toString();
+        }
+        catch (error) {
+            return;
+        }
     });
 }
 run();

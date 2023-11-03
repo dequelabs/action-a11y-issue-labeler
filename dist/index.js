@@ -13829,8 +13829,8 @@ function run() {
     var _a;
     return __awaiter(this, void 0, void 0, function* () {
         // Configuration parameters
-        const token = core.getInput('repo-token', { required: true });
-        const includeTitle = parseInt(core.getInput('include-title', { required: false }));
+        const token = getRequiredInput('repo-token');
+        const includeTitle = parseInt(getRequiredInput('include-title'));
         const metricsEnabled = yield getMeticsEnabled(token);
         if (!metricsEnabled) {
             console.log('Metrics are not enabled, exiting.');
@@ -13851,15 +13851,32 @@ function run() {
             console.log('Could not get issue or pull request title from context, exiting');
             return;
         }
-        const hasA11yLabel = issueOrPullRequestHasLabel("A11Y");
-        if (!hasA11yLabel && !issue_title.includes('[A11Y]')) {
-            console.log('Not an accessibility issue, skipping.');
-            return;
-        }
+        const LABELS = {
+            A11Y: getRequiredInput('label-a11y'),
+            BLOCKER: getRequiredInput('label-blocker'),
+            CRITICAL: getRequiredInput('label-critical'),
+            SERIOUS: getRequiredInput('label-serious'),
+            MODERATE: getRequiredInput('label-moderate'),
+            MINOR: getRequiredInput('label-minor'),
+            CUSTOMER: getRequiredInput('label-customer'),
+            PRODUCTION: getRequiredInput('label-production'),
+            VPAT: getRequiredInput('label-vpat')
+        };
+        const hasA11yLabel = issueOrPullRequestHasLabel(LABELS.A11Y);
         const addLabel = [];
         const removeLabelItems = [];
-        if (issue_title.includes('[A11Y]') && !hasA11yLabel) {
-            addLabel.push('A11Y');
+        if (hasA11yLabel) {
+            console.log('Accessibility issue. Continue.');
+        }
+        else {
+            if (issue_title.includes('[A11Y]')) {
+                console.log('Accessibility issue, but missing label. Adding label.');
+                addLabel.push(LABELS.A11Y);
+            }
+            else {
+                console.log('Not an accessibility issue. Exiting.');
+                return;
+            }
         }
         let issueContent = "";
         if (includeTitle === 1) {
@@ -13877,52 +13894,52 @@ function run() {
             }
         });
         if (checkLabel(issueContent, `\\[x\\] Blocker`)) {
-            addLabel.push('Blocker');
+            addLabel.push(LABELS.BLOCKER);
         }
-        else if (hasLabel(currentLabels, 'Blocker')) {
-            removeLabelItems.push('Blocker');
+        else if (hasLabel(currentLabels, LABELS.BLOCKER)) {
+            removeLabelItems.push(LABELS.BLOCKER);
         }
         if (checkLabel(issueContent, `\\[x\\] Critical`)) {
-            addLabel.push('Critical');
+            addLabel.push(LABELS.CRITICAL);
         }
-        else if (hasLabel(currentLabels, 'Critical')) {
-            removeLabelItems.push('Critical');
+        else if (hasLabel(currentLabels, LABELS.CRITICAL)) {
+            removeLabelItems.push(LABELS.CRITICAL);
         }
         if (checkLabel(issueContent, `\\[x\\] Serious`)) {
-            addLabel.push('Serious');
+            addLabel.push(LABELS.SERIOUS);
         }
-        else if (hasLabel(currentLabels, 'Serious')) {
-            removeLabelItems.push('Serious');
+        else if (hasLabel(currentLabels, LABELS.SERIOUS)) {
+            removeLabelItems.push(LABELS.SERIOUS);
         }
         if (checkLabel(issueContent, `\\[x\\] Moderate`)) {
-            addLabel.push('Moderate');
+            addLabel.push(LABELS.MODERATE);
         }
-        else if (hasLabel(currentLabels, 'Moderate')) {
-            removeLabelItems.push('Moderate');
+        else if (hasLabel(currentLabels, LABELS.MODERATE)) {
+            removeLabelItems.push(LABELS.MODERATE);
         }
         if (checkLabel(issueContent, `\\[x\\] Minor`)) {
-            addLabel.push('Minor');
+            addLabel.push(LABELS.MINOR);
         }
-        else if (hasLabel(currentLabels, 'Minor')) {
-            removeLabelItems.push('Minor');
+        else if (hasLabel(currentLabels, LABELS.MINOR)) {
+            removeLabelItems.push(LABELS.MINOR);
         }
         if (checkLabel(issueContent, `\\[x\\] Discovered by Customer`)) {
-            addLabel.push('Customer');
+            addLabel.push(LABELS.MINOR);
         }
-        else if (hasLabel(currentLabels, 'Customer')) {
-            removeLabelItems.push('Customer');
+        else if (hasLabel(currentLabels, LABELS.MINOR)) {
+            removeLabelItems.push(LABELS.MINOR);
         }
         if (checkLabel(issueContent, `\\[x\\] Exists in Production`)) {
-            addLabel.push('Production');
+            addLabel.push(LABELS.PRODUCTION);
         }
-        else if (hasLabel(currentLabels, 'Production')) {
-            removeLabelItems.push('Production');
+        else if (hasLabel(currentLabels, LABELS.PRODUCTION)) {
+            removeLabelItems.push(LABELS.PRODUCTION);
         }
         if (checkLabel(issueContent, `\\[x\\] Discovered during VPAT`)) {
-            addLabel.push('VPAT');
+            addLabel.push(LABELS.VPAT);
         }
-        else if (hasLabel(currentLabels, 'VPAT')) {
-            removeLabelItems.push('VPAT');
+        else if (hasLabel(currentLabels, LABELS.VPAT)) {
+            removeLabelItems.push(LABELS.VPAT);
         }
         removeLabelItems.forEach(function (label) {
             console.log(`Removing label ${label} from issue #${issue_number}`);
@@ -13933,6 +13950,9 @@ function run() {
             addLabels(token, issue_number, addLabel);
         }
     });
+}
+function getRequiredInput(name) {
+    return core.getInput(name, { required: true });
 }
 function getIssueOrPullRequestNumber() {
     const issue = github_1.context.payload.issue;

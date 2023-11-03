@@ -10,6 +10,42 @@ inputs:
     description: 'Include the title in addition to the body in the regex target'
     required: false
     default: "0"
+  label-a11y:
+    description: 'Label to apply to issues that constitute accessibility issues'
+    required: false
+    default: "A11Y"
+  label-blocker:
+    description: 'Label to apply to issues that contain blocker issues'
+    required: false
+    default: "Blocker"
+  label-critical:
+    description: 'Label to apply to issues that contain critical issues'
+    required: false
+    default: "Critical"
+  label-serious:
+    description: 'Label to apply to issues that contain serious issues'
+    required: false
+    default: "Serious"
+  label-moderate:
+    description: 'Label to apply to issues that contain moderate issues'
+    required: false
+    default: "Moderate"
+  label-minor:
+    description: 'Label to apply to issues that contain minor issues'
+    required: false
+    default: "Minor"
+  label-customer:
+    description: 'Label to apply to issues that were discovered by a customer'
+    required: false
+    default: "Customer"
+  label-production:
+    description: 'Label to apply to issues that exist in production'
+    required: false
+    default: "Production"
+  label-vpat:
+    description: 'Label to apply to issues that were discovered during a VPAT'
+    required: false
+    default: "VPAT"
 runs:
   using: node16
   main: dist/index.js

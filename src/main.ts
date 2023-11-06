@@ -2,13 +2,13 @@ import * as core from '@actions/core';
 import { context, getOctokit } from "@actions/github";
 import a11yLabels from './labels'
 import * as yaml from 'js-yaml';
+import assert from 'assert';
 
 async function run() {
   // Configuration parameters
   const token = core.getInput('repo-token', { required: true });
   const includeTitle = parseInt(core.getInput('include-title', { required: false }));
-  const a11yMetricsConfigPath = '.github/a11y-metrics.yaml';
-  const metricsEnabled: boolean = await getMeticsEnabled(token, a11yMetricsConfigPath);
+  const metricsEnabled: boolean = await getMeticsEnabled(token);
   if (!metricsEnabled) {
     console.log('Metrics are not enabled, exiting.')
     return;
@@ -237,39 +237,59 @@ async function removeLabel(
   });
 }
 
-async function getMeticsEnabled(
-  token: string,
-  configurationPath: string
-): Promise<boolean> {
-  try {
-    const configurationContent: string = await fetchContent(
-      token,
-      configurationPath
-    );
-  
-    // loads (hopefully) a `{[label:string]: string | StringOrMatchConfig[]}`, but is `any`:
-    const configObject: any = yaml.load(configurationContent);
+interface ConfigObject {
+  enabled: boolean;
+}
 
-    // transform `any` => `Map<string,StringOrMatchConfig[]>` or throw if yaml is malformed:
-    return configObject.enabled;
-  } catch (error) {
-    console.log("Unable to retrieve .github/a11y-metrics.yaml, failing.")
-    return false;
+async function getMeticsEnabled(
+  token: string
+): Promise<boolean> {
+  const supportedFileExtensions = ['yaml', 'yml'];
+  const result = false;
+
+  for (const fileExtension of supportedFileExtensions) {
+    const filePath = `.github/a11y-metrics.${fileExtension}`;
+    const content = await fetchContent(token, filePath);
+
+    if (content) {
+      try {
+        const configObject = yaml.load(content) as ConfigObject;
+        
+        assert.ok(
+          configObject,
+          `Invalid configuration in ${filePath}`
+        )
+        assert.strictEqual(
+          typeof configObject.enabled,
+          'boolean',
+          `Invalid "enabled" property in ${filePath}`
+        )
+
+        return configObject.enabled;
+      } catch (error) {
+        console.log(`Invalid yaml in ${filePath}`)
+      }
+    }
   }
+
+  return result;
 }
 
 async function fetchContent(
   token: string,
-  repoPath: string
-): Promise<string> {
-  const response: any = await getOctokit(token).rest.repos.getContent({
-    owner: context.repo.owner,
-    repo: context.repo.repo,
-    path: repoPath,
-    ref: context.sha
-  });
-
-  return Buffer.from(response.data.content, response.data.encoding).toString();
+  path: string
+): Promise<string | undefined> {
+  try {
+    const response: any = await getOctokit(token).rest.repos.getContent({
+      owner: context.repo.owner,
+      repo: context.repo.repo,
+      path,
+      ref: context.sha
+    });
+    return Buffer.from(response.data.content, response.data.encoding).toString();
+  } catch (error) {
+    return;
+  }
 }
 
 run();

@@ -5,7 +5,7 @@
   "author": "Brandon Fulco <brandon.fulco@deque.com>",
   "license": "Unlicensed",
   "scripts": {
-    "lint": "eslint .",
+    "lint": "eslint ./src",
     "fmt": "prettier --write .",
     "prebuild": "rimraf dist",
     "build": "ncc build --source-map src/main.ts"

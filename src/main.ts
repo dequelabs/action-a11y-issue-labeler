@@ -111,9 +111,9 @@ async function run() {
   }
 
   if(checkLabel(issueContent, `\\[x\\] Discovered by Customer`)) {
-    addLabel.push(LABELS.MINOR)
-  } else if (hasLabel(currentLabels, LABELS.MINOR)) {
-    removeLabelItems.push(LABELS.MINOR)
+    addLabel.push(LABELS.CUSTOMER)
+  } else if (hasLabel(currentLabels, LABELS.CUSTOMER)) {
+    removeLabelItems.push(LABELS.CUSTOMER)
   }
 
   if(checkLabel(issueContent, `\\[x\\] Exists in Production`)) {
